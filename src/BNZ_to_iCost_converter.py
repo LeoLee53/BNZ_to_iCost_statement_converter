@@ -35,7 +35,10 @@ def extract_bnz_columns(bnz_file_path, columns: list[str]) -> dict:
         if column not in bnz_data_frame.columns:
             raise KeyError(f"Column '{column}' does not exist in the BNZ data frame")
 
-        column_datas[column] = bnz_data_frame[column]
+        if column == 'Payee':
+            column_datas['Remark'] = bnz_data_frame['Payee']
+        else:
+            column_datas[column] = bnz_data_frame[column]
 
     return column_datas
 
