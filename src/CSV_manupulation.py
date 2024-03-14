@@ -60,15 +60,46 @@ def populate_template_dataframe(serieses: dict, template_data_frame):
 
 
 def format_date(populated_df):
+    """
+    :param populated_df: The pandas DataFrame that contains the column "日期" which represents dates as strings in the format dd/mm/yy.
+    :return: The pandas DataFrame with the dates in the column "日期" formatted as strings in the format yyyy/mm/dd.
+
+    Example usage:
+
+    >>> df = pd.DataFrame({"日期": ["01/01/22", "02/02/22"]})
+    >>> format_date(df)
+    >>> print(df)
+          日期
+    0  2022/01/01
+    1  2022/02/02
+
+    """
     populated_df["日期"] = to_datetime(populated_df["日期"], format="%d/%m/%y").dt.strftime("%Y/%m/%d")
 
 
 def format_amount(populated_df: pd.DataFrame):
+    """
+    :param populated_df: A pandas DataFrame with a column named '金额', representing amounts.
+    :return: None
+
+    This method formats the amounts in the '金额' column of the provided DataFrame. It takes each value in the column, converts it to a float, and takes the absolute value. The formatted values
+    * are then updated in the DataFrame inplace.
+    """
     for index in populated_df.index:
         populated_df.at[index, "金额"] = abs(float(populated_df.at[index, '金额']))
 
 
 def format_account(populated_df: pd.DataFrame):
+    """
+    Formats the account values in the given DataFrame to be absolute value.
+
+    :param populated_df: A pandas DataFrame containing the account information.
+    :return: None
+
+    The method formats the account values in the '账户1' and '账户2' columns of the DataFrame
+    according to the BNZ_TO_ICOST_ACCOUNT_MAP dictionary. The updated values are stored back
+    in the DataFrame.
+    """
     for index in populated_df.index:
         populated_df.at[index, '账户1'] = BNZ_TO_ICOST_ACCOUNT_MAP[populated_df.at[index, '账户1']]
 
@@ -77,6 +108,13 @@ def format_account(populated_df: pd.DataFrame):
 
 
 def add_currency(populated_df: pd.DataFrame, currency: str):
+    """
+    Add currency abbreviation to the currency column of the template dataframe.
+
+    :param populated_df: The DataFrame to add the currency column to.
+    :param currency: The currency value to assign to each row in the DataFrame.
+    :return: The DataFrame with the added currency column.
+    """
     populated_df["货币"] = currency
 
 
