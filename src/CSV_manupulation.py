@@ -1,6 +1,9 @@
 import os
 
 import pandas as pd
+from pandas import to_datetime
+
+from src.config import *
 
 
 def create_template_data_frame(headers) -> pd.DataFrame:
@@ -19,31 +22,30 @@ def create_template_data_frame(headers) -> pd.DataFrame:
     return pd.DataFrame(columns=headers)
 
 
-def extract_bnz_columns(bnz_file_path, columns: list[str]) -> dict:
+def extract_bnz_columns(bnz_file_path, headers: list[str]) -> dict[str, pd.Series]:
     """
     Extracts specified columns from a BNZ data frame.
 
     :param bnz_file_path: The path to the BNZ data file.
-    :param columns: The list of columns to extract.
+    :param headers: The list of columns to extract.
     :return: A dictionary mapping column names to their corresponding data.
     :raises KeyError: If any of the specified columns do not exist in the BNZ data frame.
     """
     bnz_data_frame = pd.read_csv(bnz_file_path)
 
     column_datas = dict()
-    for column in columns:
-        if column not in bnz_data_frame.columns:
-            raise KeyError(f"Column '{column}' does not exist in the BNZ data frame")
+    for header in headers:
+        if header not in bnz_data_frame.columns:
+            raise KeyError(
+                f"Header '{header}' does not exist in the BNZ data frame")
 
-        if column == 'Payee':
-            column_datas['Remark'] = bnz_data_frame['Payee']
-        else:
-            column_datas[column] = bnz_data_frame[column]
+        ch_header = ENG_TO_CN_HEADER_MAP[header]
+        column_datas[ch_header] = bnz_data_frame[header]
 
     return column_datas
 
 
-def write_columns(serieses: dict, template_data_frame):
+def populate_template_dataframe(serieses: dict, template_data_frame):
     """
     Add columns to the template_data_frame based on the serieses dictionary.
 
