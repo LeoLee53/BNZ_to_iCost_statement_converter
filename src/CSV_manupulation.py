@@ -57,6 +57,27 @@ def write_columns(serieses: dict, template_data_frame):
         template_data_frame[header] = serieses[header]
 
 
+def format_date(populated_df):
+    populated_df["日期"] = to_datetime(populated_df["日期"], format="%d/%m/%y").dt.strftime("%Y/%m/%d")
+
+
+def format_amount(populated_df: pd.DataFrame):
+    for index in populated_df.index:
+        populated_df.at[index, "金额"] = abs(float(populated_df.at[index, '金额']))
+
+
+def format_account(populated_df: pd.DataFrame):
+    for index in populated_df.index:
+        populated_df.at[index, '账户1'] = BNZ_TO_ICOST_ACCOUNT_MAP[populated_df.at[index, '账户1']]
+
+        if populated_df.at[index, '账户2'] in BNZ_TO_ICOST_ACCOUNT_MAP.keys():
+            populated_df.at[index, '账户2'] = BNZ_TO_ICOST_ACCOUNT_MAP[populated_df.at[index, '账户2']]
+
+
+def add_currency(populated_df: pd.DataFrame, currency: str):
+    populated_df["货币"] = currency
+
+
 def write_to_csv(populated_df: pd.DataFrame, dst_path: str):
     """
     Write the given pandas DataFrame to a CSV file.
