@@ -1,7 +1,7 @@
-from src.config import HEADERS
-from src.CSV_manupulation import add_currency, create_template_data_frame, extract_bnz_columns, format_account, format_amount, format_date, populate_template_dataframe
-from src.categorization import add_entry_type
 import pandas as pd
+from src.categorization import add_entry_type
+from src.CSV_manupulation import add_currency, create_template_data_frame, extract_bnz_columns, format_account, format_amount, format_date, populate_template_dataframe
+from src.config import HEADERS
 
 
 def main(dst_path):
