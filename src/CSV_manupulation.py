@@ -26,10 +26,15 @@ def extract_bnz_columns(bnz_file_path, headers: list[str]) -> dict[str, pd.Serie
     """
     Extracts specified columns from a BNZ data frame.
 
-    :param bnz_file_path: The path to the BNZ data file.
-    :param headers: The list of columns to extract.
-    :return: A dictionary mapping column names to their corresponding data.
-    :raises KeyError: If any of the specified columns do not exist in the BNZ data frame.
+    Args:
+        bnz_file_path (str): The file path of the BNZ data frame.
+        headers (list[str]): A list of column headers to extract.
+
+    Returns:
+        dict[str, pd.Series]: A dictionary mapping the extracted column headers to their corresponding series.
+
+    Raises:
+        KeyError: If a specified header does not exist in the BNZ data frame.
     """
     bnz_data_frame = pd.read_csv(bnz_file_path)
 
@@ -74,7 +79,8 @@ def format_date(populated_df):
     1  2022/02/02
 
     """
-    populated_df["日期"] = to_datetime(populated_df["日期"], format="%d/%m/%y").dt.strftime("%Y/%m/%d")
+    populated_df["日期"] = to_datetime(
+        populated_df["日期"], format="%d/%m/%y").dt.strftime("%Y/%m/%d")
 
 
 def format_amount(populated_df: pd.DataFrame):
@@ -91,20 +97,22 @@ def format_amount(populated_df: pd.DataFrame):
 
 def format_account(populated_df: pd.DataFrame):
     """
-    Formats the account values in the given DataFrame to be absolute value.
+    Formats the account names in the populated DataFrame using the BNZ_TO_ICOST_ACCOUNT_MAP.
+    Note: This method must be used BEFORE adding entry types.
 
-    :param populated_df: A pandas DataFrame containing the account information.
-    :return: None
+    Args:
+        populated_df (pd.DataFrame): The DataFrame containing the account names to be formatted.
 
-    The method formats the account values in the '账户1' and '账户2' columns of the DataFrame
-    according to the BNZ_TO_ICOST_ACCOUNT_MAP dictionary. The updated values are stored back
-    in the DataFrame.
+    Returns:
+        None
     """
     for index in populated_df.index:
-        populated_df.at[index, '账户1'] = BNZ_TO_ICOST_ACCOUNT_MAP[populated_df.at[index, '账户1']]
+        populated_df.at[index,
+                        '账户1'] = BNZ_TO_ICOST_ACCOUNT_MAP[populated_df.at[index, '账户1']]
 
         if populated_df.at[index, '账户2'] in BNZ_TO_ICOST_ACCOUNT_MAP.keys():
-            populated_df.at[index, '账户2'] = BNZ_TO_ICOST_ACCOUNT_MAP[populated_df.at[index, '账户2']]
+            populated_df.at[index,
+                            '账户2'] = BNZ_TO_ICOST_ACCOUNT_MAP[populated_df.at[index, '账户2']]
 
 
 def add_currency(populated_df: pd.DataFrame, currency: str):
