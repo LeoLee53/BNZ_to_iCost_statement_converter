@@ -170,3 +170,6 @@ cython_debug/
 .idea/inspectionProfiles/Project_Default.xml
 .vscode
 main.py
+__init__.py
+Pipfile
+Pipfile.lock
